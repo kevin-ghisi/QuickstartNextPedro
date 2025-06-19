@@ -10,19 +10,20 @@ import com.rowanmcalpin.nextftc.ftc.driving.MecanumDriverControlled;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx;
 
 import org.firstinspires.ftc.teamcode.config.subsystems.Outake;
+import org.firstinspires.ftc.teamcode.config.subsystems.Vipers;
 
-
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Tele OP Bat Tech")
 public class TeleOp extends NextFTCOpMode {
 
     public TeleOp() {
-        super(Outake.INSTANCE);
+        super(Outake.INSTANCE, Vipers.INSTANCE);
     }
 
     // Change the motor names to suit your robot.
-    public String frontLeftName = "front_left";
-    public String frontRightName = "front_right";
-    public String backLeftName = "back_left";
-    public String backRightName = "back_right";
+    public String frontLeftName = "leftFront";
+    public String frontRightName = "rightFront";
+    public String backLeftName = "leftRear";
+    public String backRightName = "rightRear";
 
     public MotorEx frontLeftMotor;
     public MotorEx frontRightMotor;
@@ -47,10 +48,13 @@ public class TeleOp extends NextFTCOpMode {
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motors = new MotorEx[] {frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor};
+
+        Outake.INSTANCE.centro();
+        Vipers.INSTANCE.resetZero();
     }
 
     @Override
-    public   void onStartButtonPressed() {
+    public void onStartButtonPressed() {
         driverControlled = new MecanumDriverControlled(motors, gamepadManager.getGamepad1(), true);
         driverControlled.invoke();
 
@@ -65,6 +69,27 @@ public class TeleOp extends NextFTCOpMode {
                         Outake.INSTANCE.fechar()
                 )
         );
+
+//        gamepadManager.getGamepad1().getDpadUp().setPressedCommand(Outake.INSTANCE::score);
+
+        gamepadManager.getGamepad1().getDpadUp().setPressedCommand(
+                () -> new SequentialGroup(
+                        Outake.INSTANCE.score(),
+                        new Delay(TimeSpan.fromSec(0.5)),
+                        Outake.INSTANCE.fechar()
+                )
+        );
+
+        gamepadManager.getGamepad1().getDpadDown().setPressedCommand(
+                () -> new SequentialGroup(
+                        Outake.INSTANCE.transfer(),
+                        new Delay(TimeSpan.fromSec(0.5)),
+                        Outake.INSTANCE.abrir()
+                )
+        );
+
+        gamepadManager.getGamepad2().getDpadDown().setPressedCommand(Vipers.INSTANCE::toLow);
+        gamepadManager.getGamepad2().getDpadRight().setPressedCommand(Vipers.INSTANCE::toMiddle);
 
     }
 }
