@@ -1,14 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
+import static com.qualcomm.robotcore.util.ClassUtil.invoke;
+
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.rowanmcalpin.nextftc.core.command.Command;
+import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup;
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup;
+import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
 import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay;
 import com.rowanmcalpin.nextftc.core.units.TimeSpan;
 import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode;
 import com.rowanmcalpin.nextftc.ftc.driving.MecanumDriverControlled;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx;
+import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition;
 
+import org.firstinspires.ftc.teamcode.config.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.config.subsystems.Outake;
 import org.firstinspires.ftc.teamcode.config.subsystems.Vipers;
 
@@ -16,7 +22,7 @@ import org.firstinspires.ftc.teamcode.config.subsystems.Vipers;
 public class TeleOp extends NextFTCOpMode {
 
     public TeleOp() {
-        super(Outake.INSTANCE, Vipers.INSTANCE);
+        super(Outake.INSTANCE, Vipers.INSTANCE, Intake.INSTANCE);
     }
 
     // Change the motor names to suit your robot.
@@ -41,6 +47,8 @@ public class TeleOp extends NextFTCOpMode {
         backRightMotor = new MotorEx(backRightName);
         frontRightMotor = new MotorEx(frontRightName);
 
+        MotorEx intake = new MotorEx("Collet");
+
         // Change the motor directions to suit your robot.
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -49,8 +57,20 @@ public class TeleOp extends NextFTCOpMode {
 
         motors = new MotorEx[] {frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor};
 
-        Outake.INSTANCE.centro();
-        Vipers.INSTANCE.resetZero();
+
+        new ParallelGroup(
+                Outake.INSTANCE.centro()
+        ).invoke();
+
+
+//        Intake.INSTANCE.retrair();
+
+        new InstantCommand(Intake.INSTANCE::retrair);
+
+        new InstantCommand(() -> {
+//            new RunToPosition(intake, 0,  this);
+            Intake.INSTANCE.retrair();
+        });
     }
 
     @Override
@@ -91,5 +111,14 @@ public class TeleOp extends NextFTCOpMode {
         gamepadManager.getGamepad2().getDpadDown().setPressedCommand(Vipers.INSTANCE::toLow);
         gamepadManager.getGamepad2().getDpadRight().setPressedCommand(Vipers.INSTANCE::toMiddle);
 
+        gamepadManager.getGamepad1().getDpadRight().setPressedCommand(Intake.INSTANCE::coleta);
+        gamepadManager.getGamepad1().getDpadLeft().setPressedCommand(Intake.INSTANCE::transferir);
+
     }
+    @Override
+    public void onUpdate() {
+        telemetry.addData("Pos Intake", Intake.INSTANCE.intake.getCurrentPosition());
+        telemetry.update();
+    }
+
 }

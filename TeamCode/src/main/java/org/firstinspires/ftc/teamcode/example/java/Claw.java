@@ -14,7 +14,7 @@ public class Claw extends Subsystem {
     // USER CODE
     public Servo servo;
     
-    public String name = "claw_servo";
+    public String name = "Out";
 
     public Command open() {
         return new ServoToPosition(servo, // SERVO TO MOVE

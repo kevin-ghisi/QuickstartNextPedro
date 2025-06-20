@@ -5,6 +5,7 @@ import com.rowanmcalpin.nextftc.core.Subsystem;
 import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
 import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController;
+import com.rowanmcalpin.nextftc.ftc.hardware.controllables.HoldPosition;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition;
@@ -39,12 +40,23 @@ public class Vipers extends Subsystem {
                 this); // IMPLEMENTED SUBSYSTEM
     }
 
+    public Command toHighBasket() {
+        return new RunToPosition(sliders, // MOTOR TO MOVE
+                2400, // TARGET POSITION, IN TICKS
+                controller, // CONTROLLER TO IMPLEMENT
+                this); // IMPLEMENTED SUBSYSTEM
+    }
+
+    @Override
+    public Command getDefaultCommand() {
+        return new HoldPosition(sliders, controller, this);
+    }
+
     @Override
     public void initialize() {
-        viperR = new MotorEx(viperR_nome);
+        viperR = new MotorEx(viperR_nome).reverse();
         viperL = new MotorEx(viperL_nome);
-        sliders = new MotorGroup(viperR, viperL);
 
-        viperR.setDirection(DcMotorSimple.Direction.REVERSE);
+        sliders = new MotorGroup(viperR, viperL);
     }
 }
