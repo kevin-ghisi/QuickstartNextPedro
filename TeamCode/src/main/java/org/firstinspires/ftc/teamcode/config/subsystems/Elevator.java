@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.config.subsystems;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.rowanmcalpin.nextftc.core.Subsystem;
 import com.rowanmcalpin.nextftc.core.command.Command;
-import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup;
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
-import com.rowanmcalpin.nextftc.core.command.utility.conditionals.BlockingConditionalCommand;
-import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay;
 import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController;
 import com.rowanmcalpin.nextftc.core.control.controllers.feedforward.Feedforward;
 import com.rowanmcalpin.nextftc.ftc.OpModeData;
@@ -20,12 +17,11 @@ import com.rowanmcalpin.nextftc.ftc.hardware.controllables.SetPower;
 
 import java.util.List;
 
-public class Outake extends Subsystem {
-    public static final Outake INSTANCE = new Outake();
+public class Elevator extends Subsystem {
+    public static final Elevator INSTANCE = new Elevator();
 
-    private Outake() {}
+    private Elevator() {}
 
-    public Servo garra, anconL, anconR, rightFinger, leftFinger, phtero;
     public MotorEx viperL, viperR;
 
     public MotorGroup sliders;
@@ -39,59 +35,13 @@ public class Outake extends Subsystem {
     };
     public PIDFController controller = new PIDFController(0.013, 0.0, 0.0005,kF,100);
 
-    public Command resetZero() {
-        return new InstantCommand(() -> {  });
-    }
-
-    public String nome_garra = "Out";
-
-    //-----
-
-    public String nome_anconL = "Ancon2";
-    public String nome_anconR = "Ancon1";
-
-    //-----
-
     public String viperR_nome = "Viper2";
     public String viperL_nome = "Viper1";
 
-    //-----
 
-    public String RightFinger = "PiquePique1";
-    public String LeftFinger = "PiquePique2";
 
 
     //-=-=-=-=-=+=-=-=-=-=-
-
-    //-----Out
-
-    public Command outAbrir() {
-        return new ServoToPosition(garra, 0.8, this);
-    }
-
-    public Command outFechar() {
-        return new ServoToPosition(garra, 0.2, this);
-    }
-
-    //-----Ancon
-
-    public Command anconTransfer() {
-        return new MultipleServosToPosition(List.of(
-                anconL, anconR
-        ), 0.4);
-    }
-
-    public Command anconClip() {
-        return new MultipleServosToPosition(List.of(
-                anconL, anconR
-        ), 0.7);
-    }
-
-    public Command anconBasket() {
-        return new MultipleServosToPosition(List.of(
-                anconL, anconR
-        ), 1);
-    }
 
     //-----Elevator
 
@@ -126,16 +76,13 @@ public class Outake extends Subsystem {
                 controller); // IMPLEMENTED SUBSYSTEM
     }
 
+    public Command getDefaultCommand() {
+        return new HoldPosition(sliders, controller, this);
+    }
     //-=-=-=-=-=+=-=-=-=-=-
 
     @Override
     public void initialize() {
-        garra = OpModeData.INSTANCE.getHardwareMap().get(Servo.class, nome_garra);
-        anconL = OpModeData.INSTANCE.getHardwareMap().get(Servo.class, nome_anconL);
-        anconR = OpModeData.INSTANCE.getHardwareMap().get(Servo.class, nome_anconR);
-
-        anconL.setDirection(Servo.Direction.REVERSE);
-
         viperR = new MotorEx(viperR_nome).reverse();
         viperL = new MotorEx(viperL_nome);
 

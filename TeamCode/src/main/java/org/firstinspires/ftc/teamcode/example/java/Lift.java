@@ -27,21 +27,24 @@ public class Lift extends Subsystem {
     public String viperL_nome = "Viper1";
 
     public Command toLow() {
-        return new RunToPosition(sliders, // MOTOR TO MOVE
+        return new RunToPosition(
+                sliders, // MOTOR TO MOVE
                 0.0, // TARGET POSITION, IN TICKS
                 controller, // CONTROLLER TO IMPLEMENT
                 this); // IMPLEMENTED SUBSYSTEM
     }
 
     public Command toMiddle() {
-        return new RunToPosition(sliders, // MOTOR TO MOVE
+        return new RunToPosition(
+                sliders, // MOTOR TO MOVE
                 500.0, // TARGET POSITION, IN TICKS
                 controller, // CONTROLLER TO IMPLEMENT
                 this); // IMPLEMENTED SUBSYSTEM
     }
 
     public Command toHigh() {
-        return new RunToPosition(sliders, // MOTOR TO MOVE
+        return new RunToPosition(
+                sliders, // MOTOR TO MOVE
                 1200.0, // TARGET POSITION, IN TICKS
                 controller, // CONTROLLER TO IMPLEMENT
                 this); // IMPLEMENTED SUBSYSTEM
