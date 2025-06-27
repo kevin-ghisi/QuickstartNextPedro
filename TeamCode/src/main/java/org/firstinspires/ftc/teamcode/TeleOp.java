@@ -10,17 +10,18 @@ import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode;
 import com.rowanmcalpin.nextftc.ftc.driving.MecanumDriverControlled;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx;
 
-import org.firstinspires.ftc.teamcode.config.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.config.subsystems.Maum;
-import org.firstinspires.ftc.teamcode.config.subsystems.Outake;
+import org.firstinspires.ftc.teamcode.config.subsystems.Elevator;
+import org.firstinspires.ftc.teamcode.config.subsystems.IntakeClaw;
+import org.firstinspires.ftc.teamcode.config.subsystems.IntakeHand;
+import org.firstinspires.ftc.teamcode.config.subsystems.IntakeSlider;
+import org.firstinspires.ftc.teamcode.config.subsystems.OutakeClaw;
+import org.firstinspires.ftc.teamcode.config.subsystems.OutakeAncon;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "BatTeleOP")
 public class TeleOp extends NextFTCOpMode {
-    public static float powerRight ;
-    public static float powerLeft;
     public TeleOp() {
-        super(Outake.INSTANCE, Intake.INSTANCE, Maum.INSTANCE);
+        super(OutakeAncon.INSTANCE, OutakeClaw.INSTANCE, IntakeClaw.INSTANCE, IntakeHand.INSTANCE, IntakeSlider.INSTANCE, Elevator.INSTANCE);
     }
 
     // Change the motor names to suit your robot.
@@ -53,7 +54,9 @@ public class TeleOp extends NextFTCOpMode {
 
         motors = new MotorEx[] {frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor};
 
-        Outake.INSTANCE.outAbrir();
+        OutakeClaw.INSTANCE.Abrir().invoke();
+        OutakeAncon.INSTANCE.Transfer().invoke();
+        IntakeClaw.INSTANCE.piqueOpen().invoke();
     }
 
     //-=-=-=-=-=+=-=-=-=-=-
@@ -63,106 +66,90 @@ public class TeleOp extends NextFTCOpMode {
         driverControlled = new MecanumDriverControlled(motors, gamepadManager.getGamepad1(), true);
         driverControlled.invoke();
 
-        powerRight = gamepad1.right_trigger;
-        powerLeft = gamepad1.left_trigger;
-
         //-=-=-=-=-=Gamepad1=-=-=-=-=-
 
         //-----Collet
 
         gamepadManager.getGamepad1().getLeftTrigger().setHeldCommand(
                 value -> new SequentialGroup(
-                        Intake.INSTANCE.colletPala()
+                        IntakeSlider.INSTANCE.Pala()
                 )
         );
 
         gamepadManager.getGamepad1().getRightTrigger().setHeldCommand(
                 value -> new SequentialGroup(
-                        Intake.INSTANCE.colletPaca()
+                        IntakeSlider.INSTANCE.Paca()
                 )
         );
 
         //-----Maum
 
-        gamepadManager.getGamepad1().getDpadUp().setPressedCommand(Maum.INSTANCE::maumTransferencia);
+        gamepadManager.getGamepad1().getDpadUp().setPressedCommand(IntakeHand.INSTANCE::Transferencia);
 
-        gamepadManager.getGamepad1().getDpadDown().setPressedCommand(Maum.INSTANCE::maumColeta);
+        gamepadManager.getGamepad1().getDpadDown().setPressedCommand(IntakeHand.INSTANCE::Coleta);
 
         //-----Pinca
 
-        gamepadManager.getGamepad1().getLeftBumper().setPressedCommand(
-                () -> new ParallelGroup(
-                        Intake.INSTANCE.piqueOpenLeftFinger(),
-                        Intake.INSTANCE.piqueOpenRightFinger()
-                )
-        );
+        gamepadManager.getGamepad1().getLeftBumper().setPressedCommand(IntakeClaw.INSTANCE::piqueOpen);
 
-        gamepadManager.getGamepad1().getRightBumper().setPressedCommand(
-                () -> new ParallelGroup(
-                        Intake.INSTANCE.piqueCloseLeftFinger(),
-                        Intake.INSTANCE.piqueCloseRightFinger()
-                )
-        );
+        gamepadManager.getGamepad1().getRightBumper().setPressedCommand(IntakeClaw.INSTANCE::piqueClose);
 
         //-----Phtero
 
-        gamepadManager.getGamepad1().getY().setPressedCommand(Intake.INSTANCE::ptheroInitPosYaw);
+        gamepadManager.getGamepad1().getY().setPressedCommand(IntakeClaw.INSTANCE::ptheroInitPosYaw);
 
-        gamepadManager.getGamepad1().getDpadLeft().setPressedCommand(Intake.INSTANCE::ptheroRotatePlusYaw);
+        gamepadManager.getGamepad1().getDpadLeft().setPressedCommand(IntakeClaw.INSTANCE::ptheroRotatePlusYaw);
 
-        gamepadManager.getGamepad1().getDpadRight().setPressedCommand(Intake.INSTANCE::ptheroRotateMinusYaw);
+        gamepadManager.getGamepad1().getDpadRight().setPressedCommand(IntakeClaw.INSTANCE::ptheroRotateMinusYaw);
 
         //-----Auto
 
-        gamepadManager.getGamepad1().getBack().setPressedCommand(Outake.INSTANCE::elevatorToTransfer);
+        gamepadManager.getGamepad1().getBack().setPressedCommand(Elevator.INSTANCE::elevatorToTransfer);
 
         gamepadManager.getGamepad1().getA().setPressedCommand(
-            () -> new SequentialGroup(
-                    new ParallelGroup(
-                            Intake.INSTANCE.ptheroInitPosYaw(),
-                            Maum.INSTANCE.maumTransferencia(),
-                            Outake.INSTANCE.anconTransfer(),
-                            Outake.INSTANCE.outAbrir()
-                    ),
-                    Intake.INSTANCE.colletTransferencia(),
-                    new Delay(0.3),
-                    Outake.INSTANCE.outFechar(),
-                    new Delay(0.5),
-                    new ParallelGroup(
-                            Intake.INSTANCE.piqueOpenLeftFinger(),
-                            Intake.INSTANCE.piqueOpenRightFinger()
-                    )
-            )
+                () -> new SequentialGroup(
+                        new ParallelGroup(
+                                IntakeClaw.INSTANCE.ptheroInitPosYaw(),
+                                IntakeHand.INSTANCE.Transferencia(),
+                                OutakeAncon.INSTANCE.Transfer(),
+                                OutakeClaw.INSTANCE.Abrir(),
+                                IntakeSlider.INSTANCE.Transferencia()
+                        ),
+                        new Delay(0.25),
+                        OutakeClaw.INSTANCE.Fechar(),
+                        new Delay(0.35),
+                        IntakeClaw.INSTANCE.piqueOpen()
+                )
         );
 
         //-=-=-=-=-=Gamepad2=-=-=-=-=-
 
         //-----Out
 
-        gamepadManager.getGamepad2().getLeftBumper().setPressedCommand(Outake.INSTANCE::outAbrir);
+        gamepadManager.getGamepad2().getLeftBumper().setPressedCommand(OutakeClaw.INSTANCE::Abrir);
 
-        gamepadManager.getGamepad2().getRightBumper().setPressedCommand(Outake.INSTANCE::outFechar);
+        gamepadManager.getGamepad2().getRightBumper().setPressedCommand(OutakeClaw.INSTANCE::Fechar);
 
         //-----Elevator
 
         gamepadManager.getGamepad2().getA().setPressedCommand(
                 () -> new SequentialGroup(
-                        Outake.INSTANCE.elevatorToLow()
+                        Elevator.INSTANCE.elevatorToLow()
                 )
         );
         gamepadManager.getGamepad2().getB().setPressedCommand(
                 () -> new SequentialGroup(
-                        Outake.INSTANCE.elevatorToScore()
+                        Elevator.INSTANCE.elevatorToScore()
                 )
         );
         gamepadManager.getGamepad2().getX().setPressedCommand(
                 () -> new SequentialGroup(
-                        Outake.INSTANCE.elevatorToMiddle()
+                        Elevator.INSTANCE.elevatorToMiddle()
                 )
         );
         gamepadManager.getGamepad2().getY().setPressedCommand(
                 () -> new SequentialGroup(
-                        Outake.INSTANCE.elevatorToHight()
+                        Elevator.INSTANCE.elevatorToHight()
                 )
         );
 
@@ -170,17 +157,17 @@ public class TeleOp extends NextFTCOpMode {
 
         gamepadManager.getGamepad2().getDpadDown().setPressedCommand(
                 () -> new SequentialGroup(
-                        Outake.INSTANCE.anconTransfer()
+                        OutakeAncon.INSTANCE.Transfer()
                 )
         );
         gamepadManager.getGamepad2().getDpadUp().setPressedCommand(
                 () -> new SequentialGroup(
-                        Outake.INSTANCE.anconBasket()
+                        OutakeAncon.INSTANCE.Basket()
                 )
         );
         gamepadManager.getGamepad2().getDpadRight().setPressedCommand(
                 () -> new SequentialGroup(
-                        Outake.INSTANCE.anconClip()
+                        OutakeAncon.INSTANCE.Clip()
                 )
         );
 
@@ -195,20 +182,14 @@ public class TeleOp extends NextFTCOpMode {
 
     @Override
     public void onUpdate(){
-        telemetry.addData("Collet", Intake.INSTANCE.collet.getCurrentPosition());
-        telemetry.addData("V1", Outake.INSTANCE.viperL.getCurrentPosition());
-        telemetry.addData("V2", Outake.INSTANCE.viperR.getCurrentPosition());
-        telemetry.addData("CoreHand", Maum.INSTANCE.hand.getCurrentPosition());
-        telemetry.addData("rightFinger", Intake.INSTANCE.rightFinger.getPosition());
-        telemetry.addData("leftFinger", Intake.INSTANCE.leftFinger.getPosition());
-        telemetry.addData("yawClaw", Intake.INSTANCE.phtero.getPosition());
-        telemetry.addData("ancon", Outake.INSTANCE.anconR.getPosition());
-
-        if(gamepad1.a){
-            telemetry.addData("botão apertado autonomo", "sim");
-        } else {
-            telemetry.addData("botão apertado autonomo", "nao");
-        }
+        telemetry.addData("Collet", IntakeSlider.INSTANCE.collet.getCurrentPosition());
+        telemetry.addData("V1", Elevator.INSTANCE.viperL.getCurrentPosition());
+        telemetry.addData("V2", Elevator.INSTANCE.viperR.getCurrentPosition());
+        telemetry.addData("CoreHand", IntakeHand.INSTANCE.hand.getCurrentPosition());
+        telemetry.addData("rightFinger", IntakeClaw.INSTANCE.rightFinger.getPosition());
+        telemetry.addData("leftFinger", IntakeClaw.INSTANCE.leftFinger.getPosition());
+        telemetry.addData("yawClaw", IntakeClaw.INSTANCE.phtero.getPosition());
+        telemetry.addData("ancon", OutakeAncon.INSTANCE.anconR.getPosition());
         telemetry.update();
     }
 

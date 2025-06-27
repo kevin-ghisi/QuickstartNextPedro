@@ -14,8 +14,6 @@ import com.rowanmcalpin.nextftc.ftc.OpModeData;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.HoldPosition;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup;
 
-import org.firstinspires.ftc.teamcode.config.subsystems.Outake;
-
 public class FConstants {
     static {
         FollowerConstants.localizers = Localizers.PINPOINT;

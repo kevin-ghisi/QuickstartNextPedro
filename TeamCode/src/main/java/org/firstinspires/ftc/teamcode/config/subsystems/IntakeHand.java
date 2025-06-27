@@ -12,57 +12,48 @@ import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.SetPower;
 
-public class Maum extends Subsystem {
-    public static final Maum INSTANCE = new Maum();
-    private Maum() { }
+public class IntakeHand extends Subsystem {
+    public static final IntakeHand INSTANCE = new IntakeHand();
+    private IntakeHand() { }
 
     public MotorEx hand;
 
-    //-----
-
     public String hand_name = "Maum";
 
-    //-----
-    //-----
-
-    //public PIDFController coreHexPID = new PIDFController(0.015, 0.0002, 0.0015);
     public PIDFController coreHexPID = new PIDFController(0.013, 0.001, 0.0001);
     public PIDFController coreHexPIDAutonomo = new PIDFController(0.008, 0.001, 0.0001);
 
-    public Command resetZero() {
-        return new InstantCommand(() -> {
-            hand.resetEncoder();
-        });
-    }
+//    public Command resetZero() {
+//        return new InstantCommand(() -> {
+//            hand.resetEncoder();
+//        });
+//    }
 
     //-=-=-=-=-=+=-=-=-=-=-
 
-    //-----Maum
+    public Command Manter() {
+        double pos = hand.getCurrentPosition();
+        return new RunToPosition(hand, // MOTOR TO MOVE
+                pos, // TARGET POSITION, IN TICKS
+                coreHexPID,this); // IMPLEMENTED SUBSYSTEM
 
-    public Command maumColeta() {
-        return new SequentialGroup(
-                new RunToPosition(hand, // MOTOR TO MOVE
-                        170, // TARGET POSITION, IN TICKS
+    }
+
+    public Command Coleta() {
+        return new RunToPosition(hand, // MOTOR TO MOVE
+                180, // TARGET POSITION, IN TICKS
+                coreHexPID, // CONTROLLER TO IMPLEMENT
+                this);
+    }
+
+    public Command ColetaAutonomo() {
+        return new RunToPosition(hand, // MOTOR TO MOVE
+                        165, // TARGET POSITION, IN TICKS
                         coreHexPID, // CONTROLLER TO IMPLEMENT
-                        this), // IMPLEMENTED SUBSYSTEM
-                new SetPower(hand, 0.2),
-                new Delay(0.15),
-                new SetPower(hand, 0)
-        );
+                        this);
     }
 
-    public Command maumColetaAutonomo() {
-        return new SequentialGroup(
-                new RunToPosition(hand, // MOTOR TO MOVE
-                        170, // TARGET POSITION, IN TICKS
-                        coreHexPIDAutonomo, // CONTROLLER TO IMPLEMENT
-                        this), // IMPLEMENTED SUBSYSTEM
-                new SetPower(hand, 0.1),
-                new Delay(0.2),
-                new SetPower(hand, 0)
-        );
-    }
-    public Command maumMetade() {
+    public Command Metade() {
         return new SequentialGroup(
                 new RunToPosition(hand, // MOTOR TO MOVE
                         120, // TARGET POSITION, IN TICKS
@@ -71,14 +62,7 @@ public class Maum extends Subsystem {
         );
     }
 
-    public Command maumPacima() {
-        return new RunToPosition(hand, // MOTOR TO MOVE
-                Math.min(hand.getCurrentPosition()+80, 160), // TARGET POSITION, IN TICKS
-                coreHexPID, // CONTROLLER TO IMPLEMENT
-                this); // IMPLEMENTED SUBSYSTEM
-    }
-
-    public Command maumTransferencia() {
+    public Command Transferencia() {
         return new SequentialGroup(
                 new RunToPosition(hand, // MOTOR TO MOVE
                         0, // TARGET POSITION, IN TICKS
@@ -92,7 +76,14 @@ public class Maum extends Subsystem {
 
     }
 
-    public Command maumPabaixo() {
+    public Command paCima() {
+        return new RunToPosition(hand, // MOTOR TO MOVE
+                Math.min(hand.getCurrentPosition()+80, 160), // TARGET POSITION, IN TICKS
+                coreHexPID, // CONTROLLER TO IMPLEMENT
+                this); // IMPLEMENTED SUBSYSTEM
+    }
+
+    public Command paBaixo() {
         return new RunToPosition(hand, // MOTOR TO MOVE
                 Math.max(hand.getCurrentPosition()-80, 0), // TARGET POSITION, IN TICKS
                 coreHexPID, // CONTROLLER TO IMPLEMENT
@@ -107,10 +98,9 @@ public class Maum extends Subsystem {
 
     @Override
     public void initialize() {
-
         hand = new MotorEx(hand_name);
         hand.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
+        hand.resetEncoder();
     }
 }

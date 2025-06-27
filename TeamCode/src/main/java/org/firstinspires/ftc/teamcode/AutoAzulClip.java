@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.teamcode.config.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.config.subsystems.Maum;
-import org.firstinspires.ftc.teamcode.config.subsystems.Outake;
+import org.firstinspires.ftc.teamcode.config.subsystems.Elevator;
+import org.firstinspires.ftc.teamcode.config.subsystems.IntakeClaw;
+import org.firstinspires.ftc.teamcode.config.subsystems.IntakeHand;
+import org.firstinspires.ftc.teamcode.config.subsystems.IntakeSlider;
+import org.firstinspires.ftc.teamcode.config.subsystems.OutakeClaw;
+import org.firstinspires.ftc.teamcode.config.subsystems.OutakeAncon;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
@@ -22,11 +25,11 @@ import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay;
 import com.rowanmcalpin.nextftc.pedro.FollowPath;
 import com.rowanmcalpin.nextftc.pedro.PedroOpMode;
 
-@Autonomous(name = "BatTech Auto Clip Azul", group = "Auto")
-public class AutoBatTechClip extends PedroOpMode {
+@Autonomous(name = "BatTech Auto Clip Azul", group = "AutoAzul")
+public class AutoAzulClip extends PedroOpMode {
 
-    public AutoBatTechClip() {
-        super(Intake.INSTANCE, Outake.INSTANCE, Maum.INSTANCE);
+    public AutoAzulClip() {
+        super(OutakeAncon.INSTANCE, OutakeClaw.INSTANCE, IntakeClaw.INSTANCE, IntakeHand.INSTANCE, IntakeSlider.INSTANCE, Elevator.INSTANCE);
     }
 
     private final Pose startPose = new Pose(9, 64, Math.toRadians(0));
@@ -116,14 +119,14 @@ public class AutoBatTechClip extends PedroOpMode {
                         new Point(23.700, 23.200, Point.CARTESIAN),
                         new Point(30.000, 40.000, Point.CARTESIAN),
                         new Point(15.000, 60.000, Point.CARTESIAN),
-                        new Point(41.050, 72.500, Point.CARTESIAN)
+                        new Point(41.050, 70.700, Point.CARTESIAN)
                 )
         );
         clipeDois.setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0));
         //10
         jogadorDois = new Path(
                 new BezierCurve(
-                        new Point(41.050, 72.500, Point.CARTESIAN),
+                        new Point(41.050, 70.700, Point.CARTESIAN),
                         new Point(15.000, 60.000, Point.CARTESIAN),
                         new Point(30.000, 40.000, Point.CARTESIAN),
                         new Point(24.000, 25.000, Point.CARTESIAN)
@@ -136,14 +139,14 @@ public class AutoBatTechClip extends PedroOpMode {
                         new Point(24.000, 25.000, Point.CARTESIAN),
                         new Point(30.000, 40.000, Point.CARTESIAN),
                         new Point(15.000, 60.000, Point.CARTESIAN),
-                        new Point(41.050, 70.000, Point.CARTESIAN)
+                        new Point(41.050, 69.500, Point.CARTESIAN)
                 )
         );
         clipeTres.setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0));
         //12
         jogadorTres = new Path(
                 new BezierCurve(
-                        new Point(41.100, 70.000, Point.CARTESIAN),
+                        new Point(41.100, 69.500, Point.CARTESIAN),
                         new Point(15.000, 60.000, Point.CARTESIAN),
                         new Point(30.000, 40.000, Point.CARTESIAN),
                         new Point(25.000, 25.000, Point.CARTESIAN)
@@ -172,32 +175,34 @@ public class AutoBatTechClip extends PedroOpMode {
         estacionar.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
     }
 
-    /*new FollowPath(inicioPHighBasket, true),
-                new Delay(1),*/
-
     public Command secondRoutine() {
         return new SequentialGroup(
 
                 //-----Início
 
-                Outake.INSTANCE.outFechar(),
+                OutakeClaw.INSTANCE.Fechar(),
                 new ParallelGroup(
-                        Outake.INSTANCE.anconClip(),
-                        Outake.INSTANCE.elevatorToMiddle(),
+                        OutakeAncon.INSTANCE.Clip(),
+                        Elevator.INSTANCE.elevatorToMiddle(),
                         new FollowPath(clipeUm, true)
                 ),
+                new Delay(0.2),
+                OutakeAncon.INSTANCE.Transfer(),
+                new Delay(0.1),
+                Elevator.INSTANCE.elevatorToScore(),
                 new Delay(0.3),
-                Outake.INSTANCE.anconTransfer(),
-                new Delay(0.3),
-                Outake.INSTANCE.elevatorToScore(),
-                Outake.INSTANCE.outAbrir(),
+                OutakeClaw.INSTANCE.Abrir(),
 
                 //-----PREPARAAH
 
                 new ParallelGroup(
                         new FollowPath(alinharEmpurraum, true),
-                        Outake.INSTANCE.anconTransfer(),
-                        Outake.INSTANCE.elevatorToLow()
+                        OutakeAncon.INSTANCE.Transfer(),
+                        new SequentialGroup(
+                                new Delay(0.4),
+                                Elevator.INSTANCE.elevatorToLowAuto()
+                        )
+
                 ),
 
 
@@ -209,22 +214,20 @@ public class AutoBatTechClip extends PedroOpMode {
 
 
                 new ParallelGroup(
-                        Intake.INSTANCE.piqueOpenRightFinger(),
-                        Intake.INSTANCE.piqueOpenLeftFinger(),
+                        IntakeClaw.INSTANCE.piqueOpen(),
                         new FollowPath(jogadorUm, true),
                         new SequentialGroup(
                                 new Delay(0.4),
-                                Intake.INSTANCE.colletClip()
+                                IntakeSlider.INSTANCE.Clip()
                         )
                 ),
                 new Delay(0.3),
                 new ParallelGroup(
-                        Maum.INSTANCE.maumColetaAutonomo(),
-                        Outake.INSTANCE.anconTransfer(),
+                        IntakeHand.INSTANCE.ColetaAutonomo(),
+                        OutakeAncon.INSTANCE.Transfer(),
                         new SequentialGroup(
                                 new Delay(0.6),
-                                Intake.INSTANCE.piqueCloseRightFinger(),
-                                Intake.INSTANCE.piqueCloseLeftFinger()
+                                IntakeClaw.INSTANCE.piqueClose()
                         )
                 ),
                 new Delay(0.5),
@@ -241,51 +244,48 @@ public class AutoBatTechClip extends PedroOpMode {
                                 //-----
                                 new SequentialGroup(
                                         new ParallelGroup(
-                                                Intake.INSTANCE.colletTransferencia(),
-                                                Maum.INSTANCE.maumTransferencia()
+                                                Elevator.INSTANCE.elevatorToLowAuto(),
+                                                IntakeSlider.INSTANCE.Transferencia(),
+                                                IntakeHand.INSTANCE.Transferencia()
                                         ),
                                         new Delay(0.3),
-                                        Outake.INSTANCE.outFechar(),
+                                        OutakeClaw.INSTANCE.Fechar(),
                                         new Delay(0.6),
-                                        new ParallelGroup(
-                                                Intake.INSTANCE.piqueOpenRightFinger(),
-                                                Intake.INSTANCE.piqueOpenLeftFinger()
-                                        ),
+                                        IntakeClaw.INSTANCE.piqueOpen(),
                                         new Delay(0.3),
                                         new ParallelGroup(
-                                                Outake.INSTANCE.anconClip(),
-                                                Outake.INSTANCE.elevatorToMiddle()
+                                                OutakeAncon.INSTANCE.Clip(),
+                                                Elevator.INSTANCE.elevatorToMiddle()
                                         )
                                 )
                         ),
                         new SequentialGroup(
                                 new Delay(0.2),
-                                Outake.INSTANCE.anconTransfer(),
+                                OutakeAncon.INSTANCE.Transfer(),
                                 new Delay(0.1),
-                                Outake.INSTANCE.elevatorToScore(),
-                                Outake.INSTANCE.outAbrir()
+                                Elevator.INSTANCE.elevatorToScore(),
+                                new Delay(0.3),
+                                OutakeClaw.INSTANCE.Abrir()
+
                         )
                 ),
 
                 //-----VoltaPraEle
 
                 new ParallelGroup(
-                        Outake.INSTANCE.elevatorToLow(),
+                        Elevator.INSTANCE.elevatorToLowAuto(),
                         new FollowPath(jogadorDois,true),
                         new SequentialGroup(
                                 new Delay(0.5),
                                 new ParallelGroup(
-                                        Intake.INSTANCE.colletClip(),
-                                        Outake.INSTANCE.anconTransfer(),
-                                        Maum.INSTANCE.maumColetaAutonomo()
+                                        IntakeSlider.INSTANCE.Clip(),
+                                        OutakeAncon.INSTANCE.Transfer(),
+                                        IntakeHand.INSTANCE.ColetaAutonomo()
                                 )
                         )
                 ),
                 new Delay(0.3),
-                new ParallelGroup(
-                        Intake.INSTANCE.piqueCloseRightFinger(),
-                        Intake.INSTANCE.piqueCloseLeftFinger()
-                ),
+                IntakeClaw.INSTANCE.piqueClose(),
                 new Delay(0.7),
                 //-----Clipe3
 
@@ -298,34 +298,33 @@ public class AutoBatTechClip extends PedroOpMode {
                                 //-----
                                 new SequentialGroup(
                                         new ParallelGroup(
-                                                Intake.INSTANCE.colletTransferencia(),
-                                                Maum.INSTANCE.maumTransferencia()
+                                                IntakeSlider.INSTANCE.Transferencia(),
+                                                IntakeHand.INSTANCE.Transferencia()
                                         ),
                                         new Delay(0.3),
-                                        Outake.INSTANCE.outFechar(),
+                                        OutakeClaw.INSTANCE.Fechar(),
                                         new Delay(0.6),
-                                        new ParallelGroup(
-                                                Intake.INSTANCE.piqueOpenRightFinger(),
-                                                Intake.INSTANCE.piqueOpenLeftFinger()
-                                        ),
+                                        IntakeClaw.INSTANCE.piqueOpen(),
                                         new Delay(0.3),
                                         new ParallelGroup(
-                                                Outake.INSTANCE.anconClip(),
-                                                Outake.INSTANCE.elevatorToMiddle()
+                                                OutakeAncon.INSTANCE.Clip(),
+                                                Elevator.INSTANCE.elevatorToMiddle()
                                         )
                                 )
                         ),
                         new SequentialGroup(
                                 new Delay(0.2),
-                                Outake.INSTANCE.anconTransfer(),
+                                OutakeAncon.INSTANCE.Transfer(),
                                 new Delay(0.1),
-                                Outake.INSTANCE.elevatorToScore(),
-                                Outake.INSTANCE.outAbrir()
+                                Elevator.INSTANCE.elevatorToScore(),
+                                new Delay(0.3),
+                                OutakeClaw.INSTANCE.Abrir()
+
                         )
                 ),
                 new ParallelGroup(
                         new FollowPath(estacionar),
-                        Outake.INSTANCE.elevatorToLow()
+                        Elevator.INSTANCE.elevatorToLowAuto()
                 )
         );
     }
@@ -335,8 +334,8 @@ public class AutoBatTechClip extends PedroOpMode {
         // Feedback to Driver Hub
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("ViperL pos", Outake.INSTANCE.viperL.getCurrentPosition());
-        telemetry.addData("ViperR pos", Outake.INSTANCE.viperR.getCurrentPosition());
+        telemetry.addData("ViperL pos", Elevator.INSTANCE.viperL.getCurrentPosition());
+        telemetry.addData("ViperR pos", Elevator.INSTANCE.viperR.getCurrentPosition());
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.update();
     }
@@ -347,8 +346,7 @@ public class AutoBatTechClip extends PedroOpMode {
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
         buildPaths();
-        new SequentialGroup(new InstantCommand(() ->Outake.INSTANCE.outFechar())).invoke();
-
+        new SequentialGroup(new InstantCommand(() ->OutakeClaw.INSTANCE.Fechar())).invoke();
     }
 
     @Override
@@ -358,4 +356,3 @@ public class AutoBatTechClip extends PedroOpMode {
 
 
 }
-
