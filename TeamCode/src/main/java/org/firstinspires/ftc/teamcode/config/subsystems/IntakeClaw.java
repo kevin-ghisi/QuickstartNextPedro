@@ -40,6 +40,13 @@ public class IntakeClaw extends Subsystem {
         );
     }
 
+    public Command piqueOpenTele() {
+        return new ParallelGroup(
+                new ServoToPosition(rightFinger, 0.6, this),
+                new ServoToPosition(leftFinger, 0.65, this)
+        );
+    }
+
     public Command piqueClose() {
         return new ParallelGroup(
                 new ServoToPosition(rightFinger, 0.896, this),

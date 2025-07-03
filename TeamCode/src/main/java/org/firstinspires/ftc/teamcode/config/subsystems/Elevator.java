@@ -37,10 +37,9 @@ public class Elevator extends Subsystem {
             return 0;
         }
     };
-    public PIDFController controller = new PIDFController(0.013, 0.0001, 0.0005,kF,100);
-
-    public PIDFController controllerLow = new PIDFController(0.013, 0.0001, 0.0005,kF,300);
-    public PIDFController holdController = new PIDFController(0.013, 0.0001, 0.0005,kF,200);
+    public PIDFController controller = new PIDFController(0.013, 0.0001, 0.0005,kF,50);
+    public PIDFController controllerLow = new PIDFController(0.013, 0.0001, 0.0005,kF,170);
+    public PIDFController holdController = new PIDFController(0.007, 0.0001, 0.0005,kF,200);
 
     public String viperR_nome = "Viper2";
     public String viperL_nome = "Viper1";
@@ -52,23 +51,34 @@ public class Elevator extends Subsystem {
         });
     }
 
+    public Command resetPosition() {
+        return new InstantCommand(() -> {
+            viperR.setCurrentPosition(0);
+            viperL.setCurrentPosition(0);
+        });
+    }
+
+    public Command negativo() {
+        return new SetPower(sliders,-0.1,this);
+    }
+
     //-=-=-=-=-=+=-=-=-=-=-
 
     //-----Elevator
 
     public Command elevatorToLow() {
-        return new RunToPosition(sliders, 0, controller, this);
+        return new ParallelRaceGroup(
+                new RunToPosition(sliders, 0, controller, this),
+                new Delay(2)
+        );
     }
     public Command elevatorToLowAuto() {
         return new SequentialGroup(
                 new ParallelRaceGroup(
-                        new RunToPosition(sliders, 30, controllerLow, this),
+                        new RunToPosition(sliders, 0, controller, this),
                         new Delay(2)
                 ),
-                new RunToPosition(sliders, sliders.getCurrentPosition(), controllerLow,this),
-                new SetPower(sliders, -0.5, this),
-                new Delay(1),
-                new SetPower(sliders, 0, this)
+                resetPosition()
         );
     }
 
@@ -112,9 +122,6 @@ public class Elevator extends Subsystem {
     public void initialize() {
         viperR = new MotorEx(viperR_nome).reverse();
         viperL = new MotorEx(viperL_nome);
-
-        viperR.resetEncoder();
-        viperL.resetEncoder();
 
         sliders = new MotorGroup(viperR, viperL);
     }

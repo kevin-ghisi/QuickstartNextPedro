@@ -24,10 +24,10 @@ import org.firstinspires.ftc.teamcode.config.subsystems.OutakeClaw;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
-@Autonomous(name = "BatTech Auto Basket Clip Azul", group = "AutoAzul")
-public class AutoAzulBasketClip extends PedroOpMode {
+@Autonomous(name = "BatTech Auto Basket Clip", group = "Autonomo")
+public class AutoBasketClip extends PedroOpMode {
 
-    public AutoAzulBasketClip() {
+    public AutoBasketClip() {
         super(OutakeAncon.INSTANCE, OutakeClaw.INSTANCE, IntakeClaw.INSTANCE, IntakeHand.INSTANCE, IntakeSlider.INSTANCE, Elevator.INSTANCE);
     }
 
@@ -157,6 +157,7 @@ public class AutoAzulBasketClip extends PedroOpMode {
                         new FollowPath(depositarSampleDois, true),
                         new SequentialGroup(
                                 new ParallelGroup(
+                                        Elevator.INSTANCE.elevatorToLowAuto(),
                                         IntakeHand.INSTANCE.Transferencia(),
                                         IntakeSlider.INSTANCE.Transferencia()
                                 ),
@@ -293,6 +294,10 @@ public class AutoAzulBasketClip extends PedroOpMode {
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
         buildPaths();
+
+        IntakeSlider.INSTANCE.resetZero().invoke();
+        Elevator.INSTANCE.resetZero().invoke();
+        IntakeHand.INSTANCE.resetZero().invoke();
     }
 
     @Override

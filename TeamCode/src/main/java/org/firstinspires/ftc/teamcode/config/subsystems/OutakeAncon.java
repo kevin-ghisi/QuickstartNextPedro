@@ -51,7 +51,7 @@ public class OutakeAncon extends Subsystem {
     public Command Basket() {
         return new MultipleServosToPosition(List.of(
                 anconL, anconR
-        ), 1);
+        ), 0.94);
     }
 
     //-=-=-=-=-=+=-=-=-=-=-

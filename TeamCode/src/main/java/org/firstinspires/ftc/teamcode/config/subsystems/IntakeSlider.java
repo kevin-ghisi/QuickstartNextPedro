@@ -9,6 +9,7 @@ import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup;
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup;
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
+import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay;
 import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController;
 import com.rowanmcalpin.nextftc.core.control.controllers.feedforward.Feedforward;
 import com.rowanmcalpin.nextftc.ftc.OpModeData;
@@ -26,15 +27,19 @@ public class IntakeSlider extends Subsystem {
 
     public String intake_nome = "Collet";
 
+    public PIDFController teleColletPID = new PIDFController(0.013, 0.00005, 0.00005);
+
+    public PIDFController teleColletPID2 = new PIDFController(0.008, 0.00005, 0.00005);
+
     public PIDFController colletPID = new PIDFController(0.013, 0.00005, 0.00005);
 
     public PIDFController handColletPID = new PIDFController(0.017, 0.00008, 0.00008);
 
-//    public Command resetZero() {
-//        return new InstantCommand(() -> {
-//            collet.resetEncoder();
-//        });
-//    }
+    public Command resetZero() {
+        return new InstantCommand(() -> {
+            collet.resetEncoder();
+        });
+    }
 
     //-=-=-=-=-=+=-=-=-=-=-
 
@@ -42,7 +47,7 @@ public class IntakeSlider extends Subsystem {
         double posAtual = collet.getCurrentPosition();
         return new RunToPosition(
                 collet, // MOTOR TO MOVE
-                Math.min(posAtual +75,1500), // TARGET POSITION, IN TICKS
+                Math.min(posAtual +125,1500), // TARGET POSITION, IN TICKS
                 colletPID,
                 this);
         // IMPLEMENTED SUBSYSTEM
@@ -53,7 +58,7 @@ public class IntakeSlider extends Subsystem {
         return new RunToPosition(
                 collet,
                 Math.max(posAtual - 75,0),
-                colletPID,
+                teleColletPID,
                 this);
 
     }
@@ -62,7 +67,16 @@ public class IntakeSlider extends Subsystem {
         double posAtual = collet.getCurrentPosition();
         return new SequentialGroup(
                 new RunToPosition(collet, 250, colletPID, this),
+                new Delay(0.1),
                 new RunToPosition(collet, 250, colletPID, this)
+        );
+    }
+
+    public Command TransferenciaTele() {
+        return new SequentialGroup(
+                new RunToPosition(collet, 190, teleColletPID2, this),
+                new Delay(0.1),
+                new RunToPosition(collet, 190, teleColletPID2, this)
         );
     }
 
@@ -99,7 +113,5 @@ public class IntakeSlider extends Subsystem {
     public void initialize() {
         collet = new MotorEx(intake_nome);
         collet.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        collet.resetEncoder();
     }
 }

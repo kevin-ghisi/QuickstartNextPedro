@@ -40,7 +40,7 @@ public class OutakeClaw extends Subsystem {
     }
 
     public Command Fechar() {
-        return new ServoToPosition(garra, 0.2, this);
+        return new ServoToPosition(garra, 0.25, this);
     }
 
     //-=-=-=-=-=+=-=-=-=-=-

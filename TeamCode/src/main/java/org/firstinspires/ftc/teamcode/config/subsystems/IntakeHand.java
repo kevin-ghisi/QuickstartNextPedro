@@ -23,11 +23,11 @@ public class IntakeHand extends Subsystem {
     public PIDFController coreHexPID = new PIDFController(0.013, 0.001, 0.0001);
     public PIDFController coreHexPIDAutonomo = new PIDFController(0.008, 0.001, 0.0001);
 
-//    public Command resetZero() {
-//        return new InstantCommand(() -> {
-//            hand.resetEncoder();
-//        });
-//    }
+    public Command resetZero() {
+        return new InstantCommand(() -> {
+            hand.resetEncoder();
+        });
+    }
 
     //-=-=-=-=-=+=-=-=-=-=-
 
@@ -56,7 +56,7 @@ public class IntakeHand extends Subsystem {
     public Command Metade() {
         return new SequentialGroup(
                 new RunToPosition(hand, // MOTOR TO MOVE
-                        120, // TARGET POSITION, IN TICKS
+                        80, // TARGET POSITION, IN TICKS
                         coreHexPIDAutonomo, // CONTROLLER TO IMPLEMENT
                         this) // IMPLEMENTED SUBSYSTEM
         );
@@ -100,7 +100,5 @@ public class IntakeHand extends Subsystem {
     public void initialize() {
         hand = new MotorEx(hand_name);
         hand.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        hand.resetEncoder();
     }
 }

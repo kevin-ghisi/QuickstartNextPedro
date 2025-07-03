@@ -56,7 +56,7 @@ public class TeleOp extends NextFTCOpMode {
 
         OutakeClaw.INSTANCE.Abrir().invoke();
         OutakeAncon.INSTANCE.Transfer().invoke();
-        IntakeClaw.INSTANCE.piqueOpen().invoke();
+        IntakeClaw.INSTANCE.piqueOpenTele().invoke();
     }
 
     //-=-=-=-=-=+=-=-=-=-=-
@@ -90,13 +90,15 @@ public class TeleOp extends NextFTCOpMode {
 
         //-----Pinca
 
-        gamepadManager.getGamepad1().getLeftBumper().setPressedCommand(IntakeClaw.INSTANCE::piqueOpen);
+        gamepadManager.getGamepad1().getLeftBumper().setPressedCommand(IntakeClaw.INSTANCE::piqueOpenTele);
 
         gamepadManager.getGamepad1().getRightBumper().setPressedCommand(IntakeClaw.INSTANCE::piqueClose);
 
         //-----Phtero
 
         gamepadManager.getGamepad1().getY().setPressedCommand(IntakeClaw.INSTANCE::ptheroInitPosYaw);
+
+        gamepadManager.getGamepad1().getX().setPressedCommand(IntakeHand.INSTANCE::Metade);
 
         gamepadManager.getGamepad1().getDpadLeft().setPressedCommand(IntakeClaw.INSTANCE::ptheroRotatePlusYaw);
 
@@ -113,12 +115,12 @@ public class TeleOp extends NextFTCOpMode {
                                 IntakeHand.INSTANCE.Transferencia(),
                                 OutakeAncon.INSTANCE.Transfer(),
                                 OutakeClaw.INSTANCE.Abrir(),
-                                IntakeSlider.INSTANCE.Transferencia()
+                                IntakeSlider.INSTANCE.TransferenciaTele()
                         ),
-                        new Delay(0.25),
+                        new Delay(0.2),
                         OutakeClaw.INSTANCE.Fechar(),
-                        new Delay(0.35),
-                        IntakeClaw.INSTANCE.piqueOpen()
+                        new Delay(0.2),
+                        IntakeClaw.INSTANCE.piqueOpenTele()
                 )
         );
 
@@ -131,6 +133,9 @@ public class TeleOp extends NextFTCOpMode {
         gamepadManager.getGamepad2().getRightBumper().setPressedCommand(OutakeClaw.INSTANCE::Fechar);
 
         //-----Elevator
+
+        gamepadManager.getGamepad2().getBack().setHeldCommand(Elevator.INSTANCE::negativo);
+        gamepadManager.getGamepad2().getBack().setReleasedCommand(Elevator.INSTANCE::resetPosition);
 
         gamepadManager.getGamepad2().getA().setPressedCommand(
                 () -> new SequentialGroup(

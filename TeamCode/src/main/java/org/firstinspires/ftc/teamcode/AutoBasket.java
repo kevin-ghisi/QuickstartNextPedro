@@ -26,10 +26,10 @@ import org.firstinspires.ftc.teamcode.config.subsystems.OutakeAncon;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
-@Autonomous(name = "BatTech Auto Basket Azul", group = "AutoAzul")
-public class AutoAzulBasket extends PedroOpMode {
+@Autonomous(name = "BatTech Auto Basket", group = "Autonomo")
+public class AutoBasket extends PedroOpMode {
 
-    public AutoAzulBasket() {
+    public AutoBasket() {
         super(OutakeAncon.INSTANCE, OutakeClaw.INSTANCE, IntakeClaw.INSTANCE, IntakeHand.INSTANCE, IntakeSlider.INSTANCE, Elevator.INSTANCE);
     }
 
@@ -234,9 +234,8 @@ public class AutoAzulBasket extends PedroOpMode {
                                 )
                         )
                 ),
-                new Delay(0.2),
                 IntakeClaw.INSTANCE.ptheroRotateMinusYaw(),
-                new Delay(0.3),
+                new Delay(0.6),
                 IntakeClaw.INSTANCE.piqueClose(),
                 new Delay(0.5),
 
@@ -249,7 +248,7 @@ public class AutoAzulBasket extends PedroOpMode {
                                         IntakeHand.INSTANCE.Transferencia(),
                                         IntakeSlider.INSTANCE.Transferencia()
                                 ),
-                                new Delay(0.3),
+                                new Delay(0.5),
                                 OutakeClaw.INSTANCE.Fechar(),
                                 new Delay(0.3),
                                 IntakeClaw.INSTANCE.piqueOpen(),
@@ -286,6 +285,9 @@ public class AutoAzulBasket extends PedroOpMode {
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
         buildPaths();
+        IntakeSlider.INSTANCE.resetZero().invoke();
+        Elevator.INSTANCE.resetZero().invoke();
+        IntakeHand.INSTANCE.resetZero().invoke();
     }
 
     @Override
