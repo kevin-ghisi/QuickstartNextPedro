@@ -20,12 +20,12 @@ public class FConstants {
         FollowerConstants.rightFrontMotorDirection = DcMotorSimple.Direction.FORWARD;
         FollowerConstants.rightRearMotorDirection = DcMotorSimple.Direction.FORWARD;
 
-        FollowerConstants.mass = 14;
+        FollowerConstants.mass = 13;
 
         FollowerConstants.xMovement = 47;
-//        FollowerConstants.xMovement = 54.654052708607786;
+//        FollowerConstants.xMovement = 57.976642380530755;
         FollowerConstants.yMovement = 34.2218;
-//        FollowerConstants.yMovement = 41.81969698942576;
+//        FollowerConstants.yMovement = 45.08259027558963;
 
         FollowerConstants.forwardZeroPowerAcceleration = -64.3021;
         FollowerConstants.lateralZeroPowerAcceleration = -85.2323;
@@ -34,16 +34,16 @@ public class FConstants {
         FollowerConstants.useSecondaryTranslationalPID = false;
         FollowerConstants.secondaryTranslationalPIDFCoefficients.setCoefficients(0.1,0,0.01,0); // Not being used, @see useSecondaryTranslationalPID
 
-        FollowerConstants.headingPIDFCoefficients.setCoefficients(1.3,0,0.15,0);
+        FollowerConstants.headingPIDFCoefficients.setCoefficients(1.25,0,0.175,0);
         FollowerConstants.useSecondaryHeadingPID = false;
         FollowerConstants.secondaryHeadingPIDFCoefficients.setCoefficients(2,0,0.1,0); // Not being used, @see useSecondaryHeadingPID
 
-        FollowerConstants.drivePIDFCoefficients.setCoefficients(0.01,0,0.0000001,0.6,0);
+        FollowerConstants.drivePIDFCoefficients.setCoefficients(0.0040,0,0.0000000001,0.9,0);
         FollowerConstants.useSecondaryDrivePID = false;
         FollowerConstants.secondaryDrivePIDFCoefficients.setCoefficients(0.1,0,0,0.6,0); // Not being used, @see useSecondaryDrivePID
 
         FollowerConstants.zeroPowerAccelerationMultiplier = 4;
-        FollowerConstants.centripetalScaling = 0.0005;
+        FollowerConstants.centripetalScaling = 0.00010;
 
         FollowerConstants.pathEndTimeoutConstraint = 500;
         FollowerConstants.pathEndTValueConstraint = 0.995;
