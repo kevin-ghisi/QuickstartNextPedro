@@ -89,9 +89,6 @@ public class AutoBatTech extends PedroOpMode {
         follower.setStartingPose(startPose);
         buildPaths();
         new SequentialGroup(new InstantCommand(() ->Outake.INSTANCE.fechar())).invoke();
-
-
-
     }
 
     @Override
