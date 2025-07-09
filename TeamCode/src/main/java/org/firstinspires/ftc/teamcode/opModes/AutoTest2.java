@@ -28,16 +28,16 @@ public class AutoTest2 extends PedroOpMode {
 
     private final Pose startPose = new Pose(8.09726443768997, 88.6322188449848, Math.toRadians(0.0));
 
-    private Path basket, clip;
+    private Path basket, clipe;
 
     public void buildPaths()
     {
-        clip = new Path(
+        clipe = new Path(
                 new BezierLine(
                         new Point(8.000, 80.000, Point.CARTESIAN),
                         new Point(38.517, 79.660, Point.CARTESIAN)
                 ));
-        clip.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
+        clipe.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
         basket = new Path(
                 new BezierCurve(
                         new Point(38.517, 79.660, Point.CARTESIAN),
@@ -50,7 +50,7 @@ public class AutoTest2 extends PedroOpMode {
     public Command secondRoutine() {
         return new SequentialGroup(
                 new ParallelGroup(
-                        new FollowPath(clip)
+                        new FollowPath(clipe)
 //                        Lift.INSTANCE.toHigh()
                 ),
                 new ParallelGroup(
