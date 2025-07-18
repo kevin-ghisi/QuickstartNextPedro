@@ -50,7 +50,7 @@ public class AutoBasket extends PedroOpMode {
                         new Point(54.274, 118.176, Point.CARTESIAN),
                         new Point(73.313, 93.666, Point.CARTESIAN)
                 ));
-            estacionar.setTangentHeadingInterpolation();
+        estacionar.setTangentHeadingInterpolation();
     }
     {
         clipe = new Path(
