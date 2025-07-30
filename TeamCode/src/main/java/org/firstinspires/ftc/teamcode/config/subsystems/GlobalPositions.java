@@ -62,12 +62,9 @@ public class GlobalPositions {
     public static double OUTAKE_SHOULDER_START_POS = 1;
 
 //    OUTAKE VIPER CONFIG
-    public static double OUTAKE_VIPER_HIGH_BASKET_POS = 1500;
-    public static double OUTAKE_VIPER_LOW_BASKET_POS = 1000;
-    public static double OUTAKE_VIPER_SPECIMEN_POS = 700;
+    public static double OUTAKE_VIPER_HIGH_BASKET_POS = 2260;
+    public static double OUTAKE_VIPER_LOW_BASKET_POS = 600;
+    public static double OUTAKE_VIPER_SPECIMEN_POS = 0;
     public static double OUTAKE_VIPER_TRANSFER_POS = 200;
     public static double OUTAKE_VIPER_START_POS = 0;
-
-
-
 }
