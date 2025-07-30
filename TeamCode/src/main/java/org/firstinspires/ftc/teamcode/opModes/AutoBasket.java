@@ -1,24 +1,16 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
 
-import static com.rowanmcalpin.nextftc.ftc.OpModeData.hardwareMap;
-import org.firstinspires.ftc.teamcode.opModes.SensorHuskyLens;
-
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.Path;
-import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
-import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup;
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup;
-import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
-import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay;
 import com.rowanmcalpin.nextftc.pedro.PedroOpMode;
 import com.rowanmcalpin.nextftc.pedro.FollowPath;
 
@@ -44,15 +36,6 @@ public class AutoBasket extends PedroOpMode {
                 ));
         basket.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(135));
 
-        estacionar = new Path(
-                new BezierCurve(
-                        new Point(12.474, 130.213, Point.CARTESIAN),
-                        new Point(54.274, 118.176, Point.CARTESIAN),
-                        new Point(73.313, 93.666, Point.CARTESIAN)
-                ));
-        estacionar.setTangentHeadingInterpolation();
-    }
-    {
         clipe = new Path(
                 new BezierLine(
                         new Point(8.000, 80.000, Point.CARTESIAN),
@@ -66,6 +49,14 @@ public class AutoBasket extends PedroOpMode {
                         new Point(14.225, 128.462, Point.CARTESIAN)
                 ));
         basket.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(135));
+
+        estacionar = new Path(
+                new BezierCurve(
+                        new Point(12.474, 130.213, Point.CARTESIAN),
+                        new Point(54.274, 118.176, Point.CARTESIAN),
+                        new Point(73.313, 93.666, Point.CARTESIAN)
+                ));
+        estacionar.setTangentHeadingInterpolation();
     }
 
     public Command secondRoutine() {

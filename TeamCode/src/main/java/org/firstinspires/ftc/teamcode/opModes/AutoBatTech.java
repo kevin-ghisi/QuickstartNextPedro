@@ -60,14 +60,14 @@ public class AutoBatTech extends PedroOpMode {
                         new FollowPath(inicioPHighBasket, true),
                         Vipers.INSTANCE.toHighBasket(),
                         Outake.INSTANCE.score()
-                ),
-                new SequentialGroup(
-                        Outake.INSTANCE.abrir(),
-                        new Delay(1),
-                        Vipers.INSTANCE.toMiddle(),
-                        new Delay(1),
-                        new FollowPath(basketToStop, true)
                 )
+//                new SequentialGroup(
+//                        Outake.INSTANCE.abrir(),
+//                        new Delay(1),
+//                        Vipers.INSTANCE.toMiddle(),
+//                        new Delay(1),
+//                        new FollowPath(basketToStop, true)
+//                )
 
         );
     }
@@ -93,7 +93,7 @@ public class AutoBatTech extends PedroOpMode {
 
     @Override
     public void onStartButtonPressed() {
-        secondRoutine().invoke();
+//        secondRoutine().invoke();
 //        opmodeTimer.resetTimer();
 ////        follower.followPath(cafe);
 //
