@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.config.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.rowanmcalpin.nextftc.core.Subsystem;
 import com.rowanmcalpin.nextftc.core.command.Command;
+import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup;
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
 import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.HoldPosition;
@@ -23,28 +25,28 @@ public class Vipers extends Subsystem {
         return new InstantCommand(() -> { viperL.resetEncoder(); viperR.resetEncoder(); });
     }
 
-    public String viperR_nome = "Viper2";
-    public String viperL_nome = "Viper1";
+    public String viperR_nome = "elevadorDireito";
+    public String viperL_nome = "elevadorEsquerdo";
 
-    public Command toLow() {
+    public Command toLowBasket() {
         return new RunToPosition(sliders, // MOTOR TO MOVE
-                0.0, // TARGET POSITION, IN TICKS
-                controller, // CONTROLLER TO IMPLEMENT
-                this); // IMPLEMENTED SUBSYSTEM
-    }
-
-    public Command toMiddle() {
-        return new RunToPosition(sliders, // MOTOR TO MOVE
-                500, // TARGET POSITION, IN TICKS
+                600, // TARGET POSITION, IN TICKS
                 controller, // CONTROLLER TO IMPLEMENT
                 this); // IMPLEMENTED SUBSYSTEM
     }
 
     public Command toHighBasket() {
         return new RunToPosition(sliders, // MOTOR TO MOVE
-                2400, // TARGET POSITION, IN TICKS
-                controller, // CONTROLLER TO IMPLEMENT
-                this); // IMPLEMENTED SUBSYSTEM
+                        2260, // TARGET POSITION, IN TICKS
+                        controller, // CONTROLLER TO IMPLEMENT
+                        this); // IMPLEMENTED SUBSYSTEM
+    }
+
+    public Command toHighSpecimen() {
+        return new RunToPosition(sliders,
+                0.0,
+                controller,
+                this);
     }
 
     @Override
