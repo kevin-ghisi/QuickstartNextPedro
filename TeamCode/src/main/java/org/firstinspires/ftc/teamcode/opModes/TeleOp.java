@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.config.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.config.subsystems.Outake;
 import org.firstinspires.ftc.teamcode.config.subsystems.Vipers;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Tele OP Bat Tech")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Tele OP Offseason")
 public class TeleOp extends NextFTCOpMode {
 
     public TeleOp() {
@@ -75,6 +75,7 @@ public class TeleOp extends NextFTCOpMode {
         new InstantCommand(() -> {
 //            new RunToPosition(intake, 0,  this);
             Intake.INSTANCE.toHome();
+            Vipers.INSTANCE.resetZero();
         });
     }
 
@@ -127,8 +128,8 @@ public class TeleOp extends NextFTCOpMode {
                 )
         );
 
-        gamepadManager.getGamepad2().getDpadDown().setPressedCommand(Vipers.INSTANCE::toLow);
-        gamepadManager.getGamepad2().getDpadRight().setPressedCommand(Vipers.INSTANCE::toMiddle);
+//        gamepadManager.getGamepad2().getDpadDown().setPressedCommand(Vipers.INSTANCE::toLow);
+//        gamepadManager.getGamepad2().getDpadRight().setPressedCommand(Vipers.INSTANCE::toMiddle);
 
         gamepadManager.getGamepad1().getDpadRight().setPressedCommand(Intake.INSTANCE::toIntake);
         gamepadManager.getGamepad1().getDpadLeft().setPressedCommand(Intake.INSTANCE::toTransfer);
@@ -137,6 +138,8 @@ public class TeleOp extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         telemetry.addData("Pos Intake", Intake.INSTANCE.intake_slider.getCurrentPosition());
+        telemetry.addData("Ele D", Vipers.INSTANCE.viperR.getCurrentPosition());
+        telemetry.addData("Ele L", Vipers.INSTANCE.viperL.getCurrentPosition());
         telemetry.update();
     }
 
