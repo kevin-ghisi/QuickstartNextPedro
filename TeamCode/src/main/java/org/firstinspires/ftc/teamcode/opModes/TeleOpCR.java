@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
-
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.config.subsystems.Outake;
 import org.firstinspires.ftc.teamcode.controller.Controller;
 import org.firstinspires.ftc.teamcode.controller.Button;
@@ -9,8 +13,11 @@ import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.Point;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup;
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup;
@@ -28,6 +35,8 @@ import org.firstinspires.ftc.teamcode.config.subsystems.Vipers;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
+import java.util.List;
+
 @TeleOp(group = "Basket Azul com AT")
 public class TeleOpCR extends PedroOpMode {
 
@@ -38,14 +47,28 @@ public class TeleOpCR extends PedroOpMode {
     public String frontRightName = "rightFront";
     public String backLeftName = "leftRear";
     public String backRightName = "rightRear";
+    public Limelight3A limelight3A;
     public MotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
     public MotorEx[] motors;
+    public Servo garra;
     public Command driverControlled;
-//    private HuskyLens huskyLens;
+        private HuskyLens huskyLens;
     private boolean tagHandle = false;
     private final Pose startPose = new Pose(73.313, 93.666, Math.toRadians(0.135));
     private Follower follower;
     private Path AtBasketAzul;
+
+    NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
+    // Obter ângulo do sample
+    double anguloSample = limelight.getEntry("tx").getDouble(0.0);
+
+    // Calcular ângulo da garra (offset de 90°)
+    double anguloGarra = anguloSample + 90;
+    anguloGarra = Math.max(0, Math.min(270, anguloGarra)); // Limita a 0°-270°
+
+    // Converter para posição do servo (ex: 270° máximo)
+    double posicaoGarra = anguloGarra / 270.0;
+
     @Override
     public void onInit() {
 
@@ -55,6 +78,8 @@ public class TeleOpCR extends PedroOpMode {
         backRightMotor = new MotorEx(backRightName);
         frontRightMotor = new MotorEx(frontRightName);
 
+        garra = hardwareMap.get(Servo.class, "claw");
+
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -62,9 +87,15 @@ public class TeleOpCR extends PedroOpMode {
 
         motors = new MotorEx[]{frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor};
 
-        //Husky Lens
-//        huskyLens = hardwareMap.get(HuskyLens.class, "Husky Lens");
-//        huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
+//        Husky Lens
+        huskyLens = hardwareMap.get(HuskyLens.class, "Husky Lens");
+        huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
+
+        //Limelight
+        limelight3A = hardwareMap.get(Limelight3A.class, "Limelight");
+        limelight3A.pipelineSwitch(0);
+        limelight3A.pipelineSwitch(1);
+        limelight3A.pipelineSwitch(2);
 
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
@@ -77,12 +108,15 @@ public class TeleOpCR extends PedroOpMode {
 
         follower.startTeleopDrive();
 
-
+        //Controles do elevador
         gamepadManager.getGamepad1().getDpadUp().setPressedCommand(Vipers.INSTANCE::toHighBasket);
-
         gamepadManager.getGamepad1().getDpadDown().setPressedCommand(Vipers.INSTANCE::toLowBasket);
-
         gamepadManager.getGamepad1().getDpadLeft().setPressedCommand(Vipers.INSTANCE::toHighSpecimen);
+
+        //Controle da angulação da garra
+        if (gamepad1.cross) {
+            garra.setPosition(anguloGarra);
+        }
     }
 
 
@@ -116,5 +150,4 @@ public class TeleOpCR extends PedroOpMode {
 //        } else {
 //            telemetry.addLine("Sem TAG");
 //        }
-    }
-}
+}}
