@@ -58,16 +58,9 @@ public class TeleOpCR extends PedroOpMode {
     private Follower follower;
     private Path AtBasketAzul;
 
-    NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
-    // Obter ângulo do sample
-    double anguloSample = limelight.getEntry("tx").getDouble(0.0);
-
-    // Calcular ângulo da garra (offset de 90°)
-    double anguloGarra = anguloSample + 90;
-    anguloGarra = Math.max(0, Math.min(270, anguloGarra)); // Limita a 0°-270°
-
-    // Converter para posição do servo (ex: 270° máximo)
-    double posicaoGarra = anguloGarra / 270.0;
+    private double anguloSample = 0;
+    private double anguloGarra = 0;
+    private double posicaoGarra = 0;
 
     @Override
     public void onInit() {
@@ -115,19 +108,34 @@ public class TeleOpCR extends PedroOpMode {
 
         //Controle da angulação da garra
         if (gamepad1.cross) {
-            garra.setPosition(anguloGarra);
+            garra.setPosition(posicaoGarra);
         }
     }
 
 
     @Override
     public void onUpdate() {
+
+        // Obter ângulo do Limelight3A (ajuste conforme a API do Limelight3A)
+        // Substitua isso pelo método correto para obter o ângulo do Limelight3A
+//        anguloSample = limelight3A.getTargetXDegrees(); // Exemplo - verifique o método real
+
+        // Calcular ângulo da garra (offset de 90°)
+        anguloGarra = anguloSample + 90;
+        anguloGarra = Math.max(0, Math.min(270, anguloGarra)); // Limita a 0°-270°
+
+        // Converter para posição do servo (0.0 a 1.0)
+        posicaoGarra = anguloGarra / 270.0;
+
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
-
         telemetry.addData("Ele D", Vipers.INSTANCE.viperR.getCurrentPosition());
         telemetry.addData("Ele L", Vipers.INSTANCE.viperL.getCurrentPosition());
+        telemetry.addData("Ângulo Sample", anguloSample);
+        telemetry.addData("Ângulo Garra", anguloGarra);
+        telemetry.addData("Posição Garra", posicaoGarra);
         telemetry.update();
+    }
 
 //        HuskyLens.Block[] tags = huskyLens.blocks();
 //
@@ -150,4 +158,4 @@ public class TeleOpCR extends PedroOpMode {
 //        } else {
 //            telemetry.addLine("Sem TAG");
 //        }
-}}
+}
